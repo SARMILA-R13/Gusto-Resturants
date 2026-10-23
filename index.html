@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gusto Restaurant - Fine Dining Experience</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Georgia', serif;
+        }
+
+        body {
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f5f0;
+            padding-top: 0;
+        }
+
+        /* Notification System */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: #2ecc71;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 2000;
+            transform: translateX(120%);
+            transition: transform 0.3s ease-in-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .notification.show { transform: translateX(0); }
+        .notification.error { background: #e74c3c; }
+        .notification i { font-size: 1.2rem; }
+
+        /* Header & Navigation */
+        header {
+            background: linear-gradient(rgba(21, 18, 18, 0.95), rgba(0,0,0,0.85));
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #d4af37;
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+            padding: 5px 0;
+            position: relative;
+        }
+        .nav-links a:hover { color: #d4af37; }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #d4af37;
+            transition: width 0.3s;
+        }
+        .nav-links a:hover::after { width: 100%; }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+                        url('https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?auto=compress&cs=tinysrgb&w=1600');
+            background-color: #1a1a1a; /* Fallback color if image fails to load */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: rgb(12, 3, 3);
+            padding-top: 80px;
+        }
+        .hero-content {
+            width: 100%;
+            max-width: 800px;
+            padding: 2rem;
+        }
+        .hero-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+        }
+        .hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: #d4af37;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+            animation: fadeInDown 1s ease-out;
+        }
+        .hero-content p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            line-height: 1.8;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        /* Hero Buttons in a Row */
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn {
+            display: inline-block;
+            background: #d4af37;
+            color: #000;
+            padding: 15px 40px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+        .btn:hover {
+            transform: translateY(-5px);
+            background: #e6c158;
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #d4af37;
+            color: #d4af37; /* Changed to gold so it is visible on light/dark backgrounds */
+        }
+        .btn-outline:hover {
+            background: #d4af37;
+            color: #000;
+        }
+
+        /* Sections */
+        section { padding: 6rem 0; }
+
+        /* Section Background Images with Dark Overlays for Readability */
+        #menu, #reservations, #experience, #events, #contact {
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: rgb(30, 27, 27);
+        }
+
+        #menu { background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1920&q=80') center/cover fixed; }
+        #reservations { background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1920&q=80') center/cover fixed; }
+        #experience { background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1920&q=80') center/cover fixed; }
+        #events { background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1920&q=80') center/cover fixed; }
+        #contact { background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1920&q=80') center/cover fixed; }
+
+        /* Ensure headings remain visible on dark backgrounds */
+        #menu h2, #reservations h2, #experience h2, #events h2, #contact h2 {
+            color: white;
+        }
+        #menu h2:after, #reservations h2:after, #experience h2:after, #events h2:after, #contact h2:after {
+            background: #d4af37;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 3.5rem;
+            color: #333;
+            position: relative;
+        }
+        h2:after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: #d4af37;
+            margin: 15px auto;
+        }
+
+        /* Menu Section */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+        .menu-category {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.4s;
+            border: 1px solid transparent;
+        }
+        .menu-category:hover {
+            transform: translateY(-10px);
+            border-color: #d4af37;
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);
+        }
+        .menu-category h3 {
+            color: #d4af37;
+            margin-bottom: 1.8rem;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+            font-size: 1.8rem;
+        }
+        .menu-item {
+            margin-bottom: 1.8rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px dashed #e0e0e0;
+            transition: transform 0.3s;
+        }
+        .menu-item:hover { transform: translateX(5px); }
+        .menu-item img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .item-name { font-weight: bold; font-size: 1.2rem; color: #333; }
+        .item-price { color: #d4af37; font-weight: bold; font-size: 1.3rem; }
+        .item-desc { color: #666; font-size: 1rem; line-height: 1.6; }
+
+        /* Reservation Form */
+        .reservation-form {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 3.5rem;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        .form-group { margin-bottom: 1.8rem; }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            background: #f9f9f9;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #d4af37;
+            background: white;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Experience Box */
+        .experience-box {
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            color: white;
+            padding: 3rem;
+            border-radius: 15px;
+            margin: 3rem 0;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .experience-box:before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(9, 9, 9, 0.738) 1px, transparent 1px);
+            background-size: 20px 20px;
+            animation: float 20s linear infinite;
+        }
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-20px, -20px) rotate(360deg); }
+        }
+        .experience-box h2 { color: white; margin-bottom: 1.5rem; position: relative; }
+        .experience-box h2:after { background: white; }
+        .experience-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .experience-feature {
+            padding: 1.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        .experience-feature i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Events Section */
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+        }
+        .event-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.4s;
+            
+        }
+        .event-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .event-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        .event-info { padding: 2rem; }
+        .event-date {
+            color: #d4af37;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Contact Section */
+        .contact-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+        .contact-info {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        .contact-details { margin-top: 2rem; }
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #110707;
+        }
+        .contact-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .contact-item i {
+            color: #d4af37;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            margin-top: 5px;
+        }
+        .contact-item h4 { margin-bottom: 5px; color: #333; }
+        .contact-form {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        .contact-form h3 { color: #d4af37; margin-bottom: 1.5rem; }
+
+        .hours-table { width: 100%; margin-top: 1rem; border-collapse: collapse; }
+        .hours-table tr { border-bottom: 1px solid #eee; }
+        .hours-table td { padding: 10px 0; }
+        .hours-table td:last-child { text-align: right; font-weight: bold; color: #d4af37; }
+
+        .map-container {
+            margin-top: 2rem;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)),
+                        url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=80') center/cover fixed;
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        .footer-section h3 {
+            color: #d4af37;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+        .footer-contact-icons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .footer-contact-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #d4af37;
+            border-radius: 50%;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 1.2rem;
+        }
+        .footer-contact-icons a:hover {
+            background: #d4af37;
+            color: #222;
+            transform: translateY(-3px);
+        }
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+        }
+
+        /* Mobile Navigation */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Scroll to top button */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: #d4af37;
+            color: #000;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        .scroll-top:hover { background: #e6c158; transform: translateY(-5px); }
+        .scroll-top.show { display: flex; }
+
+        /* Section Animation */
+        html { scroll-behavior: smooth; }
+        section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        section.visible { opacity: 1; transform: translateY(0); }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero-content h1 { font-size: 3rem; }
+            .hero-content p { font-size: 1.2rem; }
+        }
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 70px);
+                background: rgba(0, 0, 0, 0.95);
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+                padding-top: 3rem;
+                transition: left 0.3s ease;
+                gap: 2.5rem;
+            }
+            .nav-links.active { left: 0; }
+            .hero { min-height: 90vh; background-attachment: scroll; }
+            .hero-content h1 { font-size: 2.5rem; }
+            .hero-content p { font-size: 1.1rem; }
+            .form-row { grid-template-columns: 1fr; }
+            h2 { font-size: 2.3rem; }
+            section { padding: 4rem 0; }
+            .reservation-form, .menu-category, .event-card, .info-item, .contact-info, .contact-form { padding: 2rem; }
+            .experience-box { padding: 2rem 1rem; }
+            .experience-features { grid-template-columns: 1fr; }
+            .contact-container { grid-template-columns: 1fr; }
+            .hero-buttons { flex-direction: column; width: 100%; }
+            .hero-buttons .btn { width: 100%; }
+            
+            /* Fix fixed backgrounds on mobile */
+            #menu, #reservations, #experience, #events, #contact, footer {
+                background-attachment: scroll;
+            }
+        }
+        @media (max-width: 576px) {
+            .hero-content h1 { font-size: 2.2rem; }
+            .hero-content p { font-size: 1rem; }
+            .btn { padding: 12px 30px; font-size: 1rem; }
+            h2 { font-size: 2rem; }
+            .container { width: 95%; padding: 0 15px; }
+        }
+
+        /* Modal for Reservation Success */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 500px;
+            animation: modalAppear 0.3s ease-out;
+        }
+        @keyframes modalAppear {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal h3 { color: #d4af37; margin-bottom: 1rem; font-size: 2rem; }
+        .modal p { margin-bottom: 2rem; color: #666; }
+    </style>
+</head>
+<body>
+    <!-- Notification System -->
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span>Table booked successfully!</span>
+    </div>
+
+    <!-- Header & Navigation -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">Gusto</div>
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#menu">Menu</a></li>
+                <li><a href="#reservations">Reservations</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#events">Events</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container hero-content">
+            
+            <div>
+                <h1>Experience Fine Dining</h1>
+                <p>Join us for an unforgettable dining experience with seasonal ingredients and exquisite flavors.</p>
+                <div class="hero-buttons">
+                    <a href="#reservations" class="btn">Book a Table</a>
+                    <a href="#menu" class="btn btn-outline">View Menu</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    <!-- Menu Section -->
+    <section id="menu">
+        <div class="container">
+            <h2>Our Menu</h2>
+            <div class="menu-grid">
+                <div class="menu-category">
+                    <h3>Starters</h3>
+                    <div class="menu-item">
+                        <img src="C:\Users\Sarmila\OneDrive\menu 1.jpg" alt="item 1">
+                        <div class="item-header">
+                            <span class="item-name">Truffle Arancini</span>
+                            <span class="item-price">₹999</span>
+                        </div>
+                        <p class="item-desc">Crispy risotto balls with black truffle and mozzarella</p>
+                    </div>
+                    <div class="menu-item">
+                    <img src="C:\Users\Sarmila\OneDrive\menu 2.jpg" alt="item 2">
+                        <div class="item-header">
+                            <span class="item-name">Burrata Caprese</span>
+                            <span class="item-price">₹1,199</span>
+                        </div>
+                        <p class="item-desc">Fresh burrata with heirloom tomatoes and basil pesto</p>
+                    </div>
+                <div class="menu-item">
+                        <img src="C:\Users\Sarmila\Downloads\menus 13.jpg" alt="item 3">
+                        <div class="item-header">
+                            <span class="item-name">Seafood Platter</span>
+                            <span class="item-price">₹1,499</span>
+                        </div>
+                        <p class="item-desc">Selection of fresh oysters, shrimp, and crab</p>
+                    </div>
+                </div>
+
+                <div class="menu-category">
+                    <h3>Main Courses</h3>
+                    <div class="menu-item">
+                        <img src="C:\Users\Sarmila\OneDrive\menu 4.jpg" alt="item 4">
+                        <div class="item-header">
+                            <span class="item-name">Filet Mignon</span>
+                            <span class="item-price">₹3,000</span>
+                        </div>
+                        <p class="item-desc">8oz grass-fed beef with truffle mashed potatoes</p>
+                    </div>
+                    <div class="menu-item">
+                        <img src="C:\Users\Sarmila\OneDrive\menu 5.jpg" alt="item 5">
+                        <div class="item-header">
+                            <span class="item-name">Lobster Risotto</span>
+                            <span class="item-price">₹2,000</span>
+                        </div>
+                        <p class="item-desc">Creamy arborio rice with fresh Maine lobster</p>
+                    </div>
+                    <div class="menu-item">
+                        <img src="C:\Users\Sarmila\OneDrive\menu 6.jpg" alt="item 6">
+                        <div class="item-header">
+                            <span class="item-name">Truffle Pasta</span>
+                            <span class="item-price">₹2,599</span>
+                        </div>
+                        <p class="item-desc">Handmade pasta with black truffle and wild mushrooms</p>
+                    </div>
+                </div>
+
+                <div class="menu-category">
+                    <h3>Desserts</h3>
+                    <div class="menu-item">
+                        <img src="C:\Users\Sarmila\OneDrive\menu 7.jpg" alt="item 7">
+                        <div class="item-header">
+                            <span class="item-name">Chocolate Soufflé</span>
+                            <span class="item-price">₹699</span>
+                        </div>
+                        <p class="item-desc">Warm chocolate soufflé with vanilla ice cream</p>
+                    </div>
+                    <div class="menu-item">
+                        <img src="C:\Users\Sarmila\OneDrive\menu 8.jpg" alt="item 8">
+                        <div class="item-header">
+                            <span class="item-name">Tiramisu</span>
+                            <span class="item-price">₹999</span>
+                        </div>
+                        <p class="item-desc">Classic Italian dessert with espresso and mascarpone</p>
+                    </div>
+                    <div class="menu-item">
+                        <img src="C:\Users\Sarmila\OneDrive\menu 9.jpg" alt="item 9">
+                        <div class="item-header">
+                            <span class="item-name">Crème Brûlée</span>
+                            <span class="item-price">₹849</span>
+                        </div>
+                        <p class="item-desc">Vanilla bean custard with caramelized sugar</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Box Section -->
+    <section id="experience">
+        <div class="container">
+            <div class="experience-box">
+                <h2>The Gusto Experience</h2>
+                <p>Indulge in a multi-sensory dining journey that combines exceptional cuisine, elegant ambiance, and impeccable service.</p>
+                <div class="experience-features">
+                    <div class="experience-feature">
+                        <i class="fas fa-utensils"></i>
+                        <h3>Michelin-Starred Chef</h3>
+                        <p>Experience creations from our award-winning executive chef</p>
+                    </div>
+                    <div class="experience-feature">
+                        <i class="fas fa-wine-glass-alt"></i>
+                        <h3>Curated Wine Cellar</h3>
+                        <p>Over 500 selections from world-class vineyards</p>
+                    </div>
+                    <div class="experience-feature">
+                        <i class="fas fa-music"></i>
+                        <h3>Live Music Nights</h3>
+                        <p>Weekly jazz performances in our intimate dining room</p>
+                    </div>
+                    <div class="experience-feature">
+                        <i class="fas fa-star"></i>
+                        <h3>Personalized Service</h3>
+                        <p>Dedicated waitstaff ensuring an unforgettable evening</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reservations Section -->
+    <section id="reservations">
+        <div class="container">
+            <h2>Make a Reservation</h2>
+            <div class="reservation-form">
+                <form id="reservationForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="date" id="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="time">Time</label>
+                            <select id="time" required>
+                                <option value="">Select Time</option>
+                                <option>05:00</option>
+                                <option>06:00</option>
+                                <option>07:00</option>
+                                <option>08:00</option>
+                                <option>09:00</option>
+                                <option>10:00</option>
+                                <option>11:00+</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="guests">Number of Guests</label>
+                            <select id="guests" required>
+                                <option value="">Select</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                                <option>10+</option>
+                                <option>30+</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="occasion">Occasion</label>
+                            <select id="occasion">
+                                <option value="">Select</option>
+                                <option>Birthday</option>
+                                <option>Anniversary</option>
+                                <option>Business Dinner</option>
+                                <option>Date Night</option>
+                                <option>Family Gathering</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="specialRequests">Special Requests</label>
+                        <textarea id="specialRequests" rows="4" placeholder="Any dietary restrictions or special requests..."></textarea>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Book Now</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Section -->
+    <section id="events">
+        <div class="container">
+            <h2>Upcoming Events</h2>
+            <div class="events-grid">
+                <div class="event-card">
+                    <img src="C:\Users\Sarmila\Downloads\wine and dine.jpg" alt="wine & dine">
+                    <div class="event-info">
+                        <div class="event-date">Every Friday - Wine Tasting</div>
+                        <h3>Wine & Dine Evening</h3>
+                        <p>Join us for exclusive wine tasting with sommelier pairing recommendations.</p>
+                        <p><strong>Time:</strong> 7:00 PM - 10:00 PM</p>
+                        <p><strong>Price:</strong> ₹2,999 per person</p>
+                    </div>
+                </div>
+
+                <div class="event-card">
+                    <img src="C:\Users\Sarmila\Downloads\n90fnwzl.png" alt="pongal">
+                    <div class="event-info">
+                        <div class="event-date">January 14 - Special Event</div>
+                        <h3>Pongal Day Gala</h3>
+                        <p>Special 5-course festive menu with live jazz music and holiday celebrations.</p>
+                        <p><strong>Time:</strong> 6:00 PM - 11:00 PM</p>
+                        <p><strong>Price:</strong> ₹3,559 per person</p>
+                    </div>
+                </div>
+
+                <div class="event-card">
+                    <img src="C:\Users\Sarmila\OneDrive\Pictures\sunday 4 1.jpg" alt="sunday">
+                    <div class="event-info">
+                        <div class="event-date">Every Sunday - Brunch</div>
+                        <h3>Sunday Jazz Brunch</h3>
+                        <p>Live jazz music with our famous bottomless brunch and champagne.</p>
+                        <p><strong>Time:</strong> 11:00 AM - 3:00 PM</p>
+                        <p><strong>Price:</strong> ₹2,449 per person</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2>Contact Us</h2>
+            <div class="contact-container">
+                <div class="contact-info">
+                    <h3>Get in Touch</h3>
+                    <p>We'd love to hear from you. Reach out for reservations, events, or any inquiries.</p>
+
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <h4>Our Location</h4>
+                                <p>123 Anna Salai<br>Chennai, TN</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <h4>Phone Numbers</h4>
+                                <p>Reservations: +91 55521-01230</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <h4>Email Address</h4>
+                                <p>reservations@gustorestaurant.com</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <i class="fas fa-clock"></i>
+                            <div>
+                                <h4>Operating Hours</h4>
+                                <table class="hours-table">
+                                    <tr><td>Monday - Thursday</td><td>5:00 PM - 10:00 PM</td></tr>
+                                    <tr><td>Friday - Saturday</td><td>5:00 PM - 11:00 PM</td></tr>
+                                    <tr><td>Sunday</td><td>4:00 PM - 11:00 PM</td></tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-form">
+                    <h3>Send us a Message</h3>
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="contactName">Name</label>
+                            <input type="text" id="contactName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactEmail">Email</label>
+                            <input type="email" id="contactEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactSubject">Subject</label>
+                            <input type="text" id="contactSubject" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactMessage">Message</label>
+                            <textarea id="contactMessage" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn">Send Message</button>
+                    </form>
+
+                    <div class="map-container">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3886.3562155!2d80.2707!3d13.0827!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTPCsDA0JzU3LjciTiA4MMKwMTYnMTQuNSJF!5e0!3m2!1sen!2sin!4v1629780000000!5m2!1sen!2sin"
+                            width="100%"
+                            height="200"
+                            style="border:0;"
+                            allowfullscreen=""
+                            loading="lazy">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>GUSTO</h3>
+                    <p>Fine dining experience since 1995. Award-winning cuisine in an elegant setting.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Connect With Us</h3>
+                    <div class="footer-contact-icons">
+                        <a href="tel:+915552101230" title="Call Us"><i class="fas fa-phone"></i></a>
+                        <a href="mailto:reservations@gustorestaurant.com" title="Email Us"><i class="fas fa-envelope"></i></a>
+                        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2026 Gusto Restaurant. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-top" id="scrollTop">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- Modal for Reservation Success -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <i class="fas fa-check-circle" style="font-size: 4rem; color: #2ecc71; margin-bottom: 1rem;"></i>
+            <h3>Reservation Confirmed!</h3>
+            <p>Thank you for choosing Gusto Restaurant. Your table has been reserved successfully.</p>
+            <p>A confirmation email has been sent to your provided contact information.</p>
+            <button class="btn" onclick="closeModal()">Continue Exploring</button>
+        </div>
+    </div>
+
+    <script>
+        // Notification System
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('notification');
+            const icon = notification.querySelector('i');
+            const text = notification.querySelector('span');
+            text.textContent = message;
+            if (isError) {
+                notification.className = 'notification error';
+                icon.className = 'fas fa-exclamation-circle';
+            } else {
+                notification.className = 'notification';
+                icon.className = 'fas fa-check-circle';
+            }
+            notification.classList.add('show');
+            setTimeout(() => { notification.classList.remove('show'); }, 3000);
+        }
+
+        // Mobile Menu Toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            menuToggle.innerHTML = navLinks.classList.contains('active')
+                ? '<i class="fas fa-times"></i>'
+                : '<i class="fas fa-bars"></i>';
+        });
+
+        // Close menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Set minimum date to today
+        const dateInput = document.getElementById('date');
+        if (dateInput) {
+            dateInput.setAttribute('min', new Date().toISOString().split('T')[0]);
+        }
+
+        // Reservation Form Submission
+        document.getElementById('reservationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const guests = document.getElementById('guests').value;
+
+            if (!name || !phone || !date || !time || !guests) {
+                showNotification('Please fill in all required fields', true);
+                return;
+            }
+
+            const phoneRegex = /^[\+]?[0-9\s\-\(\)]{7,15}$/;
+            if (!phoneRegex.test(phone)) {
+                showNotification('Please enter a valid phone number', true);
+                return;
+            }
+
+            const selectedDate = new Date(date);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (selectedDate < today) {
+                showNotification('Please select a future date', true);
+                return;
+            }
+
+            showNotification('Table booked successfully!');
+            document.getElementById('successModal').style.display = 'flex';
+            this.reset();
+
+            console.log('Reservation Details:', {
+                name, phone, date, time, guests,
+                occasion: document.getElementById('occasion').value,
+                specialRequests: document.getElementById('specialRequests').value
+            });
+        });
+
+        // Contact Form Submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('contactName').value.trim();
+            const email = document.getElementById('contactEmail').value.trim();
+            const subject = document.getElementById('contactSubject').value.trim();
+            const message = document.getElementById('contactMessage').value.trim();
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('Please enter a valid email address', true);
+                return;
+            }
+            if (!name || !subject || !message) {
+                showNotification('Please fill in all fields', true);
+                return;
+            }
+            showNotification('Message sent successfully! We will get back to you soon.');
+            this.reset();
+            console.log('Contact Details:', { name, email, subject, message });
+        });
+
+        // Close Modal
+        function closeModal() {
+            document.getElementById('successModal').style.display = 'none';
+        }
+        window.addEventListener('click', function(e) {
+            const modal = document.getElementById('successModal');
+            if (e.target === modal) closeModal();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                const target = document.querySelector(targetId);
+                if (target) {
+                    e.preventDefault();
+                    const headerOffset = 70;
+                    const elementPosition = target.getBoundingClientRect().top + window.pageYOffset;
+                    window.scrollTo({ top: elementPosition - headerOffset, behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Scroll to Top Button
+        const scrollTopBtn = document.getElementById('scrollTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTopBtn.classList.add('show');
+            } else {
+                scrollTopBtn.classList.remove('show');
+            }
+        });
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Section Visibility Animation
+        const sections = document.querySelectorAll('section');
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    sectionObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        sections.forEach(section => sectionObserver.observe(section));
+
+        // Trigger hero visible on load
+        window.addEventListener('load', () => {
+            const hero = document.getElementById('home');
+            if (hero) hero.classList.add('visible');
+        });
+    </script>
+</body>
+</html>
